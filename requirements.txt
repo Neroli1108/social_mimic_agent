@@ -1,2 +1,3 @@
 openai
 asyncio
+google-generativeai==0.8.3

@@ -28,11 +28,22 @@ The Social Mimic Agent System simulates real-life social interactions by:
 
 This tool is valuable for researchers studying social dynamics, policy impacts, and human behavior modeling.
 
+### LLM Providers
+
+The system allows users to select between multiple LLM providers, including:
+
+- **OpenAI** (e.g., GPT-4)
+- **Hugging Face** (Custom models)
+- **Google Gemini** (e.g., Gemini 1.5 Flash)
+
+Users can choose the LLM provider and model before running the simulation.
+
 ## Features
 
 - **Agent Simulation**: Agents have unique personalities and limited memory to mimic human cognition.
 - **Policy Integration**: Policies can be introduced to observe their effects on agents.
 - **Communication System**: Agents can interact with each other and policymakers.
+- **LLM Integration**: Supports OpenAI, Hugging Face, and Google Gemini models.
 - **Logging System**: Records all agent activities for detailed analysis.
 - **Monitoring System**: Collects data from agents to provide insights into the simulation.
 
@@ -55,6 +66,9 @@ social_mimic_agent_system/
 ├── monitoring/
 │   ├── __init__.py
 │   └── monitor.py
+├── utils/
+│   ├── __init__.py
+│   └── llm_provider_selection.py
 ├── main.py
 ├── requirements.txt
 └── README.md
@@ -65,7 +79,7 @@ social_mimic_agent_system/
 ### Prerequisites
 
 - Python 3.7 or higher
-- An OpenAI API key (for LLM capabilities)
+- API keys for OpenAI, Hugging Face, or Google Gemini.
 
 ### Steps
 
@@ -89,18 +103,14 @@ social_mimic_agent_system/
    pip install -r requirements.txt
    ```
 
-4. **Set Up OpenAI API Key**
+4. **Set Up API Keys**
 
-   Replace `'YOUR_API_KEY'` in `agents/agent.py` with your actual OpenAI API key:
-
-   ```python
-   openai.api_key = 'YOUR_API_KEY'
-   ```
-
-   Alternatively, you can set the `OPENAI_API_KEY` environment variable:
+   Replace `'YOUR_API_KEY'` in `agents/agent.py` with your actual API keys for the LLM provider (OpenAI, Hugging Face, or Gemini), or set the environment variables:
 
    ```bash
-   export OPENAI_API_KEY='your_api_key'  # On Windows use `set`
+   export OPENAI_API_KEY='your_openai_key'
+   export HUGGING_FACE_API_KEY='your_hugging_face_key'
+   export GEMINI_API_KEY='your_gemini_key'
    ```
 
 ## Usage
@@ -111,7 +121,7 @@ Run the main simulation script:
 python main.py
 ```
 
-This will start the simulation with predefined agents and policies.
+This will start the simulation and prompt you to select an LLM provider and model.
 
 ## Configuration
 
@@ -174,7 +184,7 @@ The default simulation includes two agents, Alice and Bob, interacting under a n
    Adjust the number of simulation steps in `main.py`:
 
    ```python
-   for _ in range(10):  # Increase steps from 5 to 10
+   for _ in range 10:  # Increase steps from 5 to 10
        # Simulation code...
    ```
 
@@ -194,7 +204,7 @@ The monitoring system collects data at each simulation step and prints a summary
 ## Limitations
 
 - **Simplified Model**: This is a basic simulation and may not capture all complexities of human behavior.
-- **API Usage**: Be mindful of OpenAI API call limits and costs.
+- **API Usage**: Be mindful of OpenAI, Hugging Face, and Gemini API call limits and costs.
 - **Error Handling**: Limited exception handling is implemented; enhancements may be necessary for robustness.
 
 ## Contributing
@@ -213,4 +223,4 @@ This project is licensed under the [MIT License](LICENSE).
 
 ---
 
-**Note**: This project is intended for educational and research purposes. Ensure compliance with OpenAI's usage policies when using the OpenAI API.
+**Note**: This project is intended for educational and research purposes. Ensure compliance with OpenAI, Hugging Face, and Gemini's usage policies when using their APIs.

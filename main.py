@@ -4,11 +4,16 @@ from policies.policy import Policy
 from communication.communication import CommunicationSystem
 from logging_system.logger import Logger
 from monitoring.monitor import Monitor
+from utils.llm_provider_selection import LLMProviderSelector
 
 async def main():
-    # Initialize agents
-    agent1 = Agent(name="Alice", personality_traits="optimistic and outgoing")
-    agent2 = Agent(name="Bob", personality_traits="pessimistic and introverted")
+    # Select LLM provider
+    selector = LLMProviderSelector()
+    provider_model, provider = selector.prompt_provider_selection()
+
+    # Initialize agents with LLM provider
+    agent1 = Agent(name="Alice", personality_traits="optimistic and outgoing", provider=provider, provider_model=provider_model)
+    agent2 = Agent(name="Bob", personality_traits="pessimistic and introverted", provider=provider, provider_model=provider_model)
     agents = [agent1, agent2]
 
     # Initialize systems
@@ -18,7 +23,7 @@ async def main():
     monitor = Monitor(agents)
 
     # Send policy to agents
-    comm_system.send_policy(policy)
+    await comm_system.send_policy(policy)
 
     # Simulation steps
     for _ in range(5):

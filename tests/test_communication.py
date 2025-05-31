@@ -5,8 +5,8 @@ from agents.agent import Agent
 
 class TestCommunicationSystem(unittest.IsolatedAsyncioTestCase):
     async def test_broadcast(self):
-        agent1 = Agent(name="Agent1", personality_traits="Trait1")
-        agent2 = Agent(name="Agent2", personality_traits="Trait2")
+        agent1 = Agent(name="Agent1", personality_traits="Trait1", provider="test")
+        agent2 = Agent(name="Agent2", personality_traits="Trait2", provider="test")
         agents = [agent1, agent2]
         comm_system = CommunicationSystem(agents)
 
@@ -16,8 +16,8 @@ class TestCommunicationSystem(unittest.IsolatedAsyncioTestCase):
         self.assertNotIn("Agent1 says: Hello", agent1.memory)
 
     async def test_send_policy(self):
-        agent1 = Agent(name="Agent1", personality_traits="Trait1")
-        agent2 = Agent(name="Agent2", personality_traits="Trait2")
+        agent1 = Agent(name="Agent1", personality_traits="Trait1", provider="test")
+        agent2 = Agent(name="Agent2", personality_traits="Trait2", provider="test")
         agents = [agent1, agent2]
         comm_system = CommunicationSystem(agents)
 
@@ -25,7 +25,7 @@ class TestCommunicationSystem(unittest.IsolatedAsyncioTestCase):
             policy_text = "Test Policy"
 
         policy = MockPolicy()
-        comm_system.send_policy(policy)
+        await comm_system.send_policy(policy)
 
         self.assertEqual(agent1.policy_knowledge, "Test Policy")
         self.assertEqual(agent2.policy_knowledge, "Test Policy")

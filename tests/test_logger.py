@@ -6,7 +6,7 @@ from agents.agent import Agent
 class TestLogger(unittest.TestCase):
     def setUp(self):
         self.logger = Logger(log_dir='test_logs')
-        self.agent = Agent(name="TestAgent", personality_traits="TestTrait")
+        self.agent = Agent(name="TestAgent", personality_traits="TestTrait", provider="test")
         self.agent.log = ["Log Entry 1", "Log Entry 2"]
 
     def test_log_agent_activity(self):
@@ -18,8 +18,10 @@ class TestLogger(unittest.TestCase):
             self.assertIn("Log Entry 1", logs)
             self.assertIn("Log Entry 2", logs)
         # Clean up
-        os.remove(log_file)
-        os.rmdir('test_logs')
+        if os.path.exists(log_file):
+            os.remove(log_file)
+        if os.path.exists('test_logs'):
+            os.rmdir('test_logs')
 
 if __name__ == '__main__':
     unittest.main()

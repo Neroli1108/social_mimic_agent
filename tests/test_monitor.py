@@ -4,8 +4,8 @@ from agents.agent import Agent
 
 class TestMonitor(unittest.TestCase):
     def setUp(self):
-        agent1 = Agent(name="Agent1", personality_traits="Trait1")
-        agent2 = Agent(name="Agent2", personality_traits="Trait2")
+        agent1 = Agent(name="Agent1", personality_traits="Trait1", provider="test")
+        agent2 = Agent(name="Agent2", personality_traits="Trait2", provider="test")
         self.agents = [agent1, agent2]
         self.monitor = Monitor(self.agents)
 
@@ -27,7 +27,7 @@ class TestMonitor(unittest.TestCase):
         output = captured_output.getvalue()
         self.assertIn("Agent1", output)
         self.assertIn("Agent2", output)
-        self.assertEqual(len(self.monitor.data), 0)  # Data should be cleared after report
+        self.assertEqual(len(self.monitor.data), 0)
 
 if __name__ == '__main__':
     unittest.main()

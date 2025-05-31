@@ -5,7 +5,13 @@ import asyncio
 
 class TestAgent(unittest.IsolatedAsyncioTestCase):
     def setUp(self):
-        self.agent = Agent(name="TestAgent", personality_traits="test personality", memory_limit=3)
+        # Provide required parameters for Agent
+        self.agent = Agent(
+            name="TestAgent", 
+            personality_traits="test personality", 
+            provider="test",
+            memory_limit=3
+        )
 
     async def test_perceive(self):
         await self.agent.perceive("Message 1")
@@ -25,10 +31,9 @@ class TestAgent(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(self.agent.policy_knowledge, "Test Policy")
 
     async def test_act(self):
-        # Mock generate_response to avoid API calls
-        self.agent.generate_response = asyncio.coroutine(lambda x: "Test Action")
         action = await self.agent.act()
-        self.assertEqual(action, "Test Action")
+        self.assertIsInstance(action, str)
+        self.assertIn("TestAgent", action)
 
 if __name__ == '__main__':
     unittest.main()

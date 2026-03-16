@@ -5,8 +5,8 @@ from agents.agent import Agent
 
 class TestCommunicationSystem(unittest.IsolatedAsyncioTestCase):
     async def test_broadcast(self):
-        agent1 = Agent(name="Agent1", personality_traits="Trait1", provider="test")
-        agent2 = Agent(name="Agent2", personality_traits="Trait2", provider="test")
+        agent1 = Agent(name="Agent1", personality_traits="Trait1", llm_client=None)
+        agent2 = Agent(name="Agent2", personality_traits="Trait2", llm_client=None)
         agents = [agent1, agent2]
         comm_system = CommunicationSystem(agents)
 
@@ -16,8 +16,8 @@ class TestCommunicationSystem(unittest.IsolatedAsyncioTestCase):
         self.assertNotIn("Agent1 says: Hello", agent1.memory)
 
     async def test_send_policy(self):
-        agent1 = Agent(name="Agent1", personality_traits="Trait1", provider="test")
-        agent2 = Agent(name="Agent2", personality_traits="Trait2", provider="test")
+        agent1 = Agent(name="Agent1", personality_traits="Trait1", llm_client=None)
+        agent2 = Agent(name="Agent2", personality_traits="Trait2", llm_client=None)
         agents = [agent1, agent2]
         comm_system = CommunicationSystem(agents)
 

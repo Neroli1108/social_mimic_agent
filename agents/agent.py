@@ -1,17 +1,23 @@
 from collections import deque
-import asyncio
-import google.generativeai as genai
-import os
-import random
+from typing import Optional
+
+from src.llm.base import LLMClient
+from src.config import settings
+
 
 class Agent:
-    def __init__(self, name, personality_traits, provider=None, provider_model=None, memory_limit=5):
+    def __init__(
+        self,
+        name: str,
+        personality_traits: str,
+        llm_client: Optional[LLMClient] = None,
+        memory_limit: int = None
+    ):
         self.name = name
         self.personality_traits = personality_traits
-        self.memory = deque(maxlen=memory_limit)
+        self.llm_client = llm_client
+        self.memory = deque(maxlen=memory_limit or settings.default_memory_limit)
         self.policy_knowledge = ""
-        self.provider = provider
-        self.provider_model = provider_model
         self.log = []
         self.action_count = 0
         self.stance_on_policy = None  # Will be determined based on personality
@@ -23,11 +29,11 @@ class Agent:
     async def act(self):
         # Add more variation to actions based on step count and memory
         self.action_count += 1
-        
+
         # Determine stance if not set
         if self.stance_on_policy is None:
             self.stance_on_policy = self._determine_policy_stance()
-        
+
         # Create more dynamic prompts
         context = self._build_context()
         prompt = f"""You are {self.name}, a person with {self.personality_traits} personality.
@@ -37,7 +43,7 @@ Your stance on this policy: {self.stance_on_policy}
 Current situation: This is action #{self.action_count} in our ongoing community discussion.
 Recent community interactions: {context}
 
-Based on your personality, stance, and the evolving situation, what SPECIFIC action do you take next? 
+Based on your personality, stance, and the evolving situation, what SPECIFIC action do you take next?
 Be concrete and varied - don't repeat the same action. Consider:
 - Different ways to express your stance
 - Various community engagement methods
@@ -54,7 +60,7 @@ Respond in 1-2 sentences describing a DIFFERENT action from before."""
         """Determine agent's stance on policy based on personality and policy type"""
         personality_lower = self.personality_traits.lower()
         policy_lower = self.policy_knowledge.lower()
-        
+
         # Analyze policy type
         if "tariff" in policy_lower:
             if any(trait in personality_lower for trait in ["conservative", "traditional", "business"]):
@@ -83,27 +89,28 @@ Respond in 1-2 sentences describing a DIFFERENT action from before."""
         """Build context from recent memories"""
         if not self.memory:
             return "No recent interactions"
-        
+
         recent_memories = list(self.memory)[-2:] if len(self.memory) >= 2 else list(self.memory)
         return "; ".join([mem[:80] + "..." if len(mem) > 80 else mem for mem in recent_memories])
 
-    async def generate_response(self, prompt):
-        if self.provider == "openai":
-            return f"As {self.name}, given my {self.stance_on_policy} stance, I take action #{self.action_count} to address this tariff policy in my own way."
-        elif self.provider == "hugging_face":
-            return f"With my {self.personality_traits} nature and {self.stance_on_policy} position, I respond to this policy change strategically."
-        elif self.provider == "gemini":
+    async def generate_response(self, prompt: str) -> str:
+        """Generate a response using the injected LLM client."""
+        if self.llm_client is not None:
             try:
-                if self.provider_model:
-                    response = self.provider_model.generate_content(prompt)
-                    return response.text.strip()
-                else:
-                    return f"As {self.name}, being {self.stance_on_policy}, I take concrete action #{self.action_count} regarding the tariff policy."
+                return await self.llm_client.generate(prompt)
             except Exception as e:
-                print(f"⚠️  Gemini API error for {self.name}: {e}")
-                return f"As {self.name}, with my {self.stance_on_policy} stance, I respond to this policy in action #{self.action_count}."
+                print(f"LLM error for {self.name}: {e}")
+                return self._fallback_response()
         else:
-            return f"As {self.name}, I respond to this situation with my {self.personality_traits} approach in action #{self.action_count}."
+            return self._fallback_response()
+
+    def _fallback_response(self) -> str:
+        """Generate a fallback response when LLM is unavailable."""
+        return (
+            f"As {self.name}, with my {self.stance_on_policy} stance, "
+            f"I respond to this situation with my {self.personality_traits} approach "
+            f"in action #{self.action_count}."
+        )
 
     def receive_policy(self, policy):
         self.policy_knowledge = policy

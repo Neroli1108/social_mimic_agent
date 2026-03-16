@@ -6,7 +6,7 @@ from agents.agent import Agent
 class TestLogger(unittest.TestCase):
     def setUp(self):
         self.logger = Logger(log_dir='test_logs')
-        self.agent = Agent(name="TestAgent", personality_traits="TestTrait", provider="test")
+        self.agent = Agent(name="TestAgent", personality_traits="TestTrait", llm_client=None)
         self.agent.log = ["Log Entry 1", "Log Entry 2"]
 
     def test_log_agent_activity(self):

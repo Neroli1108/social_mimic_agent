@@ -5,11 +5,11 @@ import asyncio
 
 class TestAgent(unittest.IsolatedAsyncioTestCase):
     def setUp(self):
-        # Provide required parameters for Agent
+        # Provide required parameters for Agent (no LLM client for testing)
         self.agent = Agent(
-            name="TestAgent", 
-            personality_traits="test personality", 
-            provider="test",
+            name="TestAgent",
+            personality_traits="test personality",
+            llm_client=None,
             memory_limit=3
         )
 
